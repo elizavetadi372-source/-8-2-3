@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Корень n-й степени</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0f2b24;
+    --bg-2: #143a30;
+    --ink: #f2ecdc;
+    --muted: #a9c2b6;
+    --amber: #e0a83f;
+    --amber-deep: #c8862a;
+    --coral: #e2734f;
+    --green: #4d9c6c;
+    --red: #d15b4a;
+    --track: #274b3f;
+
+    /* theory / cards — matches the original worksheet photo */
+    --t-bg: #fdfaf3;
+    --t-border: #e7dcc0;
+    --t-ink: #2c2620;
+    --t-muted: #6f6553;
+    --t-pill-bg: #f0d9b8;
+    --t-pill-ink: #6b4a1d;
+    --t-band-bg: #f4e6cd;
+    --t-idx: #c8862a;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; }
+  body{
+    background: radial-gradient(120% 140% at 15% -10%, var(--bg-2) 0%, var(--bg) 55%);
+    color: var(--ink);
+    font-family: "Manrope", -apple-system, sans-serif;
+    min-height: 100vh;
+    padding: 0 0 90px;
+    overflow-x: hidden;
+  }
+  .wrap{ max-width: 780px; margin: 0 auto; padding: 0 20px; }
+
+  /* ---------- HERO ---------- */
+  .hero{ position: relative; padding: 64px 20px 46px; text-align: center; }
+  .hero .radical{
+    font-family: "Fraunces", serif;
+    font-size: clamp(64px, 16vw, 108px);
+    font-weight: 600;
+    color: var(--amber);
+    line-height: 1;
+    display: inline-block;
+    position: relative;
+  }
+  .hero .radical .idx{
+    font-size: 0.28em;
+    position: absolute;
+    top: -0.1em;
+    left: -0.62em;
+    color: var(--coral);
+  }
+  .hero h1{
+    font-family: "Fraunces", serif;
+    font-weight: 600;
+    font-size: clamp(28px, 5.2vw, 40px);
+    margin: 14px 0 10px;
+    letter-spacing: -0.01em;
+  }
+  .hero p{ color: var(--muted); max-width: 460px; margin: 0 auto; font-size: 1.02rem; line-height: 1.55; }
+
+  .sprout-row{ display:flex; justify-content:center; gap: 14px; margin-top: 26px; }
+  .sprout-row svg{ width: 30px; height: 30px; opacity: .55; }
+
+  /* ---------- PROGRESS ---------- */
+  .progress-bar-wrap{ max-width: 780px; margin: -6px auto 34px; padding: 0 20px; }
+  .progress-shell{ background: var(--track); border-radius: 999px; height: 14px; overflow: hidden; position: relative; }
+  .progress-fill{ height: 100%; width: 0%; background: linear-gradient(90deg, var(--amber), var(--coral)); border-radius: 999px; transition: width .5s ease; }
+  .progress-label{ display:flex; justify-content: space-between; font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
+  .progress-label b{ color: var(--amber); font-weight: 700; }
+
+  /* ---------- THEORY (styled like the original worksheet photo) ---------- */
+  .theory-pill-wrap{ text-align:center; margin-bottom: 18px; }
+  .theory-pill{
+    display:inline-block;
+    background: var(--t-pill-bg);
+    color: var(--t-pill-ink);
+    font-family: "Manrope", sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: .03em;
+    padding: 8px 30px;
+    border-radius: 999px;
+  }
+
+  .theory-card{
+    background: var(--t-bg);
+    color: var(--t-ink);
+    border: 1px solid var(--t-border);
+    border-radius: 16px;
+    padding: 26px 28px 22px;
+    margin-bottom: 34px;
+    box-shadow: 0 18px 40px -22px rgba(0,0,0,.5);
+  }
+  .theory-card h2{
+    font-family: "Manrope", sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    margin: 0 0 14px;
+    letter-spacing: .01em;
+  }
+  .theory-card > p.def{
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--t-ink);
+    margin: 0 0 18px;
+  }
+
+  .formula-row{
+    display:flex;
+    align-items: center;
+    gap: 26px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  .formula-row .big-formula{ font-family: "Fraunces", serif; font-size: 1.5rem; white-space: nowrap; }
+  .formula-row .legend{
+    font-family: "Manrope", sans-serif;
+    font-size: 0.85rem;
+    color: var(--t-muted);
+    line-height: 1.7;
+  }
+  .formula-row .legend b{ color: var(--t-ink); font-weight: 700; }
+
+  .band{
+    background: var(--t-band-bg);
+    color: var(--t-pill-ink);
+    font-family: "Manrope", sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: .02em;
+    text-align: center;
+    padding: 9px 0;
+    border-radius: 8px;
+    margin: 4px 0 14px;
+  }
+
+  .prop{
+    display:flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 2px;
+    border-bottom: 1px solid var(--t-border);
+    font-family: "Fraunces", serif;
+    font-size: 1.05rem;
+    flex-wrap: wrap;
+  }
+  .prop:last-child{ border-bottom: none; }
+  .prop .n{
+    font-family: "Manrope", sans-serif;
+    font-weight: 700;
+    color: var(--t-idx);
+    width: 20px;
+    flex-shrink:0;
+  }
+  .prop .body{ display:flex; align-items:center; gap: 8px; flex-wrap: wrap; }
+  .prop .cond{
+    margin-left: auto;
+    font-family: "Manrope", sans-serif;
+    font-size: 0.8rem;
+    color: var(--t-muted);
+    white-space: nowrap;
+  }
+
+  /* --- math primitives: proper fraction and radical, drawn with CSS --- */
+  .frac{
+    display:inline-flex;
+    flex-direction:column;
+    align-items:center;
+    vertical-align:middle;
+    text-align:center;
+    font-size:0.68em;
+    line-height:1.15;
+    margin:0 2px;
+    position:relative;
+    top: 0.05em;
+  }
+  .frac .num{ border-bottom:1.4px solid currentColor; padding:0 5px 1px; }
+  .frac .den{ padding:1px 5px 0; }
+
+  .root{
+    display:inline-flex;
+    align-items:flex-start;
+    vertical-align:middle;
+    margin:0 2px;
+    position: relative;
+  }
+  .root .deg{
+    font-size:0.5em;
+    position:relative;
+    top:0.35em;
+    margin-right:-0.3em;
+    font-family: "Manrope", sans-serif;
+    font-weight:700;
+  }
+  .root .sign{ font-size:1.15em; line-height:1; margin-right:-0.02em; transform: translateY(0.02em); }
+  .root .arg{
+    border-top:1.4px solid currentColor;
+    padding: 0 4px 0 3px;
+    margin-left: -0.05em;
+  }
+
+  /* ---------- TRAINER ---------- */
+  .trainer-head{ text-align:center; margin: 46px 0 22px; }
+  .trainer-head .tag{
+    display:inline-block; background: var(--coral); color: #2a0e05;
+    font-weight: 800; font-size: 0.78rem; letter-spacing: .02em;
+    padding: 7px 18px; border-radius: 999px; margin-bottom: 12px;
+  }
+  .trainer-head h2{ font-family: "Fraunces", serif; font-weight: 600; font-size: 1.7rem; margin: 0 0 8px; }
+  .trainer-head p{ color: var(--muted); font-size: 0.98rem; }
+
+  .set{
+    background: var(--t-bg);
+    color: var(--t-ink);
+    border-radius: 22px;
+    padding: 26px 26px 14px;
+    margin-bottom: 22px;
+    box-shadow: 0 18px 40px -20px rgba(0,0,0,.4);
+  }
+  .set-head{ display:flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+  .set-head .code{ font-family: "Fraunces", serif; font-weight: 600; font-size: 1.15rem; }
+  .set-head .count{ font-size: 0.8rem; color: var(--t-muted); font-weight: 600; }
+  .set-sub{ font-size: 0.92rem; color: var(--t-muted); margin-bottom: 14px; }
+  .given{
+    display:inline-flex; gap: 16px; background: var(--bg-2); color: var(--ink);
+    font-family: "Fraunces", serif; font-size: 1rem; padding: 8px 16px; border-radius: 10px; margin-bottom: 16px;
+  }
+
+  .task{
+    display:flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 2px;
+    border-bottom: 1px solid var(--t-border);
+    flex-wrap: wrap;
+  }
+  .task:last-child{ border-bottom: none; }
+
+  .task .letter{ font-family: "Fraunces", serif; font-weight: 600; color: var(--amber-deep); width: 20px; flex-shrink:0; }
+  .task .expr{ font-family: "Fraunces", serif; font-size: 1.08rem; }
+
+  .answer-wrap{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+  .answer-wrap .eq{ font-family: "Fraunces", serif; font-size: 1.05rem; color: var(--t-muted); }
+  .ans-input{
+    width: 92px;
+    font-family: "Manrope", sans-serif;
+    font-size: 0.98rem;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1.6px solid var(--t-border);
+    background: #fff;
+    color: var(--t-ink);
+    outline: none;
+    transition: border-color .15s, background .15s;
+  }
+  .ans-input:focus{ border-color: var(--amber); }
+  .check-btn{
+    font-family: "Manrope", sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    background: var(--amber);
+    color: #241102;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform .1s, background .15s;
+  }
+  .check-btn:hover{ transform: translateY(-1px); }
+  .feedback{
+    font-family: "Manrope", sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    min-width: 20px;
+  }
+
+  .task.correct .ans-input{ border-color: var(--green); background: #eef7ef; color: #1d5c37; }
+  .task.correct .check-btn{ background: var(--green); color: #fff; }
+  .task.correct .feedback{ color: var(--green); }
+  .task.correct .expr{ opacity: .55; }
+
+  .task.incorrect .ans-input{ border-color: var(--red); }
+  .task.incorrect .feedback{ color: var(--red); }
+
+  @keyframes shake{
+    0%,100%{ transform: translateX(0); }
+    25%{ transform: translateX(-4px); }
+    75%{ transform: translateX(4px); }
+  }
+  .task.shake .ans-input{ animation: shake .25s ease; }
+
+  /* ---------- FOOTER CELEBRATION ---------- */
+  .cheer{
+    text-align:center; margin-top: 40px; padding: 26px; border-radius: 20px;
+    background: linear-gradient(135deg, var(--amber), var(--coral)); color: #241102;
+    font-family: "Fraunces", serif; font-size: 1.15rem; font-weight: 600; display: none;
+  }
+  .cheer.show{ display:block; }
+
+  @media (max-width: 520px){
+    .theory-card, .set{ padding: 22px 18px 16px; }
+    .formula-row{ gap: 14px; }
+    .task{ gap: 10px; }
+    .answer-wrap{ margin-left: 0; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="radical"><span class="idx">n</span>√a</span>
+  <h1>Корень зовёт на подвиг</h1>
+  <p>Двадцать семь примеров — впиши ответ и сразу узнай, верно ли. Следи за прогрессом и дойди до конца.</p>
+  <div class="sprout-row">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V10M12 10C12 6 9 4 5 4C5 8 7 11 12 10ZM12 10C12 6 15 4 19 4C19 8 17 11 12 10Z"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V10M12 10C12 6 9 4 5 4C5 8 7 11 12 10ZM12 10C12 6 15 4 19 4C19 8 17 11 12 10Z"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21V10M12 10C12 6 9 4 5 4C5 8 7 11 12 10ZM12 10C12 6 15 4 19 4C19 8 17 11 12 10Z"/></svg>
+  </div>
+</div>
+
+<div class="progress-bar-wrap">
+  <div class="progress-shell"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label"><span>Прогресс</span><span><b id="progressCount">0</b> / <span id="progressTotal">0</span> решено</span></div>
+</div>
+
+<div class="wrap">
+
+  <div class="theory-pill-wrap"><span class="theory-pill">ТЕОРИЯ</span></div>
+
+  <div class="theory-card">
+    <h2>2. КОРЕНЬ n-Й СТЕПЕНИ</h2>
+    <p class="def">Корнем n-й степени из числа a (n ≥ 2) называют такое число, n-я степень которого равна a.</p>
+
+    <div class="formula-row">
+      <div class="big-formula">
+        <span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">a</span></span>
+        &nbsp;=&nbsp; b, если&nbsp; b<sup>n</sup> = a
+      </div>
+      <div class="legend"><b>n</b> — показатель корня<br><b>a</b> — подкоренное выражение</div>
+    </div>
+
+    <div class="band">СВОЙСТВА КОРНЕЙ</div>
+
+    <div class="prop">
+      <span class="n">1)</span>
+      <span class="body">
+        <span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">ab</span></span>
+        =
+        <span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">a</span></span>
+        ·
+        <span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">b</span></span>
+      </span>
+      <span class="cond">(a ≥ 0, b ≥ 0)</span>
+    </div>
+
+    <div class="prop">
+      <span class="n">2)</span>
+      <span class="body">
+        <span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">a</span><span class="den">b</span></span></span></span>
+        =
+        <span class="frac">
+          <span class="num"><span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">a</span></span></span>
+          <span class="den"><span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">b</span></span></span>
+        </span>
+      </span>
+      <span class="cond">(a ≥ 0, b &gt; 0)</span>
+    </div>
+
+    <div class="prop">
+      <span class="n">3)</span>
+      <span class="body">
+        <span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">a<sup>k</sup></span></span>
+        =
+        (<span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">a</span></span>)<sup>k</sup>
+      </span>
+      <span class="cond">(a ≥ 0)</span>
+    </div>
+
+    <div class="prop">
+      <span class="n">4)</span>
+      <span class="body">
+        <span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">
+          <span class="root"><span class="deg">k</span><span class="sign">√</span><span class="arg">a</span></span>
+        </span></span>
+        =
+        <span class="root"><span class="deg">nk</span><span class="sign">√</span><span class="arg">a</span></span>
+      </span>
+      <span class="cond">(a ≥ 0)</span>
+    </div>
+
+    <div class="prop">
+      <span class="n">5)</span>
+      <span class="body">
+        (<span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">a</span></span>)<sup>n</sup> = a
+      </span>
+      <span class="cond">(a ≥ 0)</span>
+    </div>
+
+    <div class="prop">
+      <span class="n">6)</span>
+      <span class="body">
+        <span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">a<sup>n</sup></span></span> = |a|
+      </span>
+      <span class="cond">(n чётное)</span>
+    </div>
+    <div class="prop">
+      <span class="n"></span>
+      <span class="body">
+        <span class="root"><span class="deg">n</span><span class="sign">√</span><span class="arg">a<sup>n</sup></span></span> = a
+      </span>
+      <span class="cond">(n нечётное)</span>
+    </div>
+  </div>
+
+  <div class="trainer-head">
+    <span class="tag">Тренажёр</span>
+    <h2>Задания из сборника</h2>
+    <p>Впиши ответ и нажми «Проверить» (или Enter)</p>
+  </div>
+
+  <div class="set" data-set="1">
+    <div class="set-head"><span class="code">21.5</span><span class="count"><span class="done-count">0</span>/15</span></div>
+    <div class="set-sub">Выполните действие извлечения корня</div>
+    <div class="task-list">
+      <div class="task" data-answer="5"><span class="letter">а)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">25</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="9"><span class="letter">б)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">81</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="20"><span class="letter">в)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">400</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="11"><span class="letter">г)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">121</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0"><span class="letter">д)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">0</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="600"><span class="letter">е)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">360 000</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="200"><span class="letter">ж)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">40 000</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0.3"><span class="letter">з)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">0,09</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0.6"><span class="letter">и)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">0,36</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="1.4"><span class="letter">к)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">1,96</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="2.5"><span class="letter">л)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">6,25</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0.001"><span class="letter">м)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">0,000001</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0.07"><span class="letter">н)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">0,0049</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0.333333"><span class="letter">о)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">1</span><span class="den">9</span></span></span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0.222222"><span class="letter">п)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">4</span><span class="den">81</span></span></span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+    </div>
+  </div>
+
+  <div class="set" data-set="2">
+    <div class="set-head"><span class="code">21.8</span><span class="count"><span class="done-count">0</span>/10</span></div>
+    <div class="set-sub">Найдите значение выражения</div>
+    <div class="task-list">
+      <div class="task" data-answer="11"><span class="letter">а)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">25</span></span> + <span class="root"><span class="sign">√</span><span class="arg">36</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="-1"><span class="letter">б)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">81</span></span> − <span class="root"><span class="sign">√</span><span class="arg">100</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0.8"><span class="letter">в)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">0,25</span></span> + <span class="root"><span class="sign">√</span><span class="arg">0,09</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0.2"><span class="letter">г)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">1,69</span></span> − <span class="root"><span class="sign">√</span><span class="arg">1,21</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="7.5"><span class="letter">д)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">49</span></span> + <span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">1</span><span class="den">4</span></span></span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="-9.333333"><span class="letter">е)</span><span class="expr">− <span class="root"><span class="sign">√</span><span class="arg">81</span></span> − <span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">1</span><span class="den">9</span></span></span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="1.607143"><span class="letter">ж)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">9</span><span class="den">16</span></span></span></span> + <span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">36</span><span class="den">49</span></span></span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="0.377778"><span class="letter">з)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">9</span><span class="den">25</span></span></span></span> − <span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">4</span><span class="den">81</span></span></span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="7"><span class="letter">и)</span><span class="expr">42 : <span class="root"><span class="sign">√</span><span class="arg">36</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="2"><span class="letter">к)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">144</span></span> · <span class="root"><span class="sign">√</span><span class="arg"><span class="frac"><span class="num">1</span><span class="den">36</span></span></span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+    </div>
+  </div>
+
+  <div class="set" data-set="3">
+    <div class="set-head"><span class="code">21.14</span><span class="count"><span class="done-count">0</span>/2</span></div>
+    <div class="set-sub">Найдите значение выражения</div>
+    <div class="given">m = 16 &nbsp;&nbsp; n = 20</div>
+    <div class="task-list">
+      <div class="task" data-answer="2"><span class="letter">а)</span><span class="expr"><span class="root"><span class="sign">√</span><span class="arg">n − m</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+      <div class="task" data-answer="80"><span class="letter">б)</span><span class="expr">n · <span class="root"><span class="sign">√</span><span class="arg">m</span></span></span><span class="answer-wrap"><span class="eq">=</span><input type="text" class="ans-input" inputmode="decimal" placeholder="ответ"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></span></div>
+    </div>
+  </div>
+
+  <div class="cheer" id="cheer">Все примеры решены — корень покорён! 🌱</div>
+
+</div>
+
+<script>
+(function(){
+  var tasks = Array.prototype.slice.call(document.querySelectorAll('.task[data-answer]'));
+  var total = tasks.length;
+  document.getElementById('progressTotal').textContent = total;
+
+  function storageKey(){ return 'korni-trenazher-answers'; }
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(storageKey());
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){ return {}; }
+  }
+  function saveState(state){
+    try{ localStorage.setItem(storageKey(), JSON.stringify(state)); }catch(e){}
+  }
+
+  function parseAnswer(raw){
+    if(!raw) return null;
+    var s = raw.trim().replace(',', '.');
+    if(s === '') return null;
+    var fracMatch = s.match(/^(-?\d+(?:\.\d+)?)\s*\/\s*(-?\d+(?:\.\d+)?)$/);
+    if(fracMatch){
+      var num = parseFloat(fracMatch[1]);
+      var den = parseFloat(fracMatch[2]);
+      if(den !== 0) return num/den;
+    }
+    var mixedMatch = s.match(/^(-?\d+)\s+(\d+)\s*\/\s*(\d+)$/);
+    if(mixedMatch){
+      var whole = parseFloat(mixedMatch[1]);
+      var n = parseFloat(mixedMatch[2]);
+      var d = parseFloat(mixedMatch[3]);
+      var sign = whole < 0 ? -1 : 1;
+      return whole + sign * (n / d);
+    }
+    var num2 = parseFloat(s);
+    if(!isNaN(num2)) return num2;
+    return null;
+  }
+
+  function updateProgress(){
+    var doneTotal = 0;
+    document.querySelectorAll('.set').forEach(function(set){
+      var setTasks = set.querySelectorAll('.task[data-answer]');
+      var doneInSet = 0;
+      setTasks.forEach(function(t){ if(t.classList.contains('correct')) doneInSet++; });
+      var counter = set.querySelector('.done-count');
+      if(counter) counter.textContent = doneInSet;
+      doneTotal += doneInSet;
+    });
+    var pct = total ? Math.round((doneTotal/total)*100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = doneTotal;
+    var cheer = document.getElementById('cheer');
+    if(doneTotal === total && total > 0){ cheer.classList.add('show'); }
+    else{ cheer.classList.remove('show'); }
+  }
+
+  var state = loadState();
+
+  tasks.forEach(function(task, i){
+    var key = 'task-' + i;
+    var input = task.querySelector('.ans-input');
+    var button = task.querySelector('.check-btn');
+    var feedback = task.querySelector('.feedback');
+    var expected = parseFloat(task.getAttribute('data-answer'));
+    var tol = 0.015;
+
+    if(state[key] && state[key].correct){
+      task.classList.add('correct');
+      input.value = state[key].value || '';
+      input.disabled = true;
+      button.textContent = 'Верно ✓';
+      feedback.textContent = '';
+    }
+
+    function check(){
+      var val = parseAnswer(input.value);
+      if(val === null){
+        feedback.textContent = 'впиши число';
+        return;
+      }
+      if(Math.abs(val - expected) <= tol){
+        task.classList.remove('incorrect');
+        task.classList.add('correct');
+        input.disabled = true;
+        button.textContent = 'Верно ✓';
+        feedback.textContent = '';
+        var s = loadState();
+        s[key] = { correct: true, value: input.value };
+        saveState(s);
+        updateProgress();
+      }else{
+        task.classList.add('incorrect');
+        feedback.textContent = 'не то, попробуй ещё';
+        task.classList.remove('shake');
+        void task.offsetWidth;
+        task.classList.add('shake');
+      }
+    }
+
+    button.addEventListener('click', check);
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); check(); }
+    });
+    input.addEventListener('input', function(){
+      task.classList.remove('incorrect');
+      feedback.textContent = '';
+    });
+  });
+
+  updateProgress();
+})();
+</script>
+
+</body>
+</html>
