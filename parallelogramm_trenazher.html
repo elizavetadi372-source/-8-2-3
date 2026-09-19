@@ -132,6 +132,22 @@
   .cheer{ text-align:center; margin-top: 34px; padding: 26px; border-radius: 18px; background: linear-gradient(135deg, var(--gold), var(--coral)); color: #fdf3e4; font-family: "Fraunces", serif; font-size: 1.12rem; font-weight: 600; display: none; }
   .cheer.show{ display:block; }
 
+
+  .angle-set{ grid-template-columns: 170px 1fr; }
+  .angle-grid{ display:grid; gap:10px; margin: 4px 0 14px; }
+  .angle-row{ display:grid; grid-template-columns:minmax(240px,1fr) 145px 130px; gap:8px; align-items:center; font-size:.92rem; }
+  .angle-row > span:first-child{ line-height:1.4; }
+  .angle-row .ans-input{ width:100%; }
+  .angle-hint{ color:var(--muted); font-size:.78rem; }
+  .angle-actions{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .angle-note{ color:var(--muted); font-size:.76rem; margin-top:8px; }
+  .angle-set.correct .angle-input{ border-color:var(--green); background:#edf6ef; color:#1d5c37; }
+  .angle-set.incorrect .angle-input{ border-color:var(--coral); }
+  @media (max-width: 760px){
+    .angle-row{ grid-template-columns:1fr 130px; }
+    .angle-hint{ grid-column:2; }
+  }
+
   @media (max-width: 640px){
     .card{ padding: 22px 18px 20px; }
     .set{ grid-template-columns: 1fr; padding: 20px; }
@@ -240,6 +256,31 @@
   <p>Впиши ответ и нажми «Проверить» (или Enter)</p>
 </div>
 
+
+  <div class="set angle-set" data-answer="0">
+    <div class="diagram-box"><div><svg class="pg" viewBox="0 0 300 210" xmlns="http://www.w3.org/2000/svg">
+      <polygon class="pg-outline" points="62,180 162,180 212,44 112,44"></polygon>
+      <text class="pg-vlabel" x="45" y="195">A</text>
+      <text class="pg-vlabel" x="171" y="195">B</text>
+      <text class="pg-vlabel" x="221" y="37">C</text>
+      <text class="pg-vlabel" x="95" y="37">D</text>
+    </svg></div><div class="fig-caption">Задание 19</div></div>
+    <div class="set-body">
+      <div class="set-head"><span class="num">19</span><span class="status">не решено</span></div>
+      <p class="statement"><b>Найдите неизвестные углы параллелограмма ABCD, если:</b></p>
+      <div class="angle-grid">
+        <div class="angle-row"><span><b>а)</b> ∠B = 110°;</span><input type="text" class="ans-input angle-input" data-answers="70 70 110" placeholder="A, C, D"><span class="angle-hint">∠A, ∠C, ∠D</span></div>
+        <div class="angle-row"><span><b>б)</b> ∠A + ∠C = 120°;</span><input type="text" class="ans-input angle-input" data-answers="60 120" placeholder="A, B"><span class="angle-hint">∠A, ∠B</span></div>
+        <div class="angle-row"><span><b>в)</b> угол A на 30° меньше угла B;</span><input type="text" class="ans-input angle-input" data-answers="75 105" placeholder="A, B"><span class="angle-hint">∠A, ∠B</span></div>
+        <div class="angle-row"><span><b>г)</b> ∠C : ∠B = 3 : 5;</span><input type="text" class="ans-input angle-input" data-answers="67.5 112.5" placeholder="C, B"><span class="angle-hint">∠C, ∠B</span></div>
+        <div class="angle-row"><span><b>д)</b> ∠BAC = 40°, ∠DAC = 30°;</span><input type="text" class="ans-input angle-input" data-answers="70 110 70 110" placeholder="A, B, C, D"><span class="angle-hint">∠A, ∠B, ∠C, ∠D</span></div>
+        <div class="angle-row"><span><b>е)</b> ∠D − 2∠C = 16°.</span><input type="text" class="ans-input angle-input" data-answers="54.67 125.33" placeholder="C, D"><span class="angle-hint">∠C, ∠D</span></div>
+      </div>
+      <div class="angle-actions"><button class="check-btn angle-check" type="button">Проверить все</button><span class="feedback"></span></div>
+      <div class="angle-note">Вводи несколько ответов через пробел или запятую.</div>
+    </div>
+  </div>
+
   <div class="set" data-answer="107">
     <div class="diagram-box"><div><svg class="pg" viewBox="0 0 300 210" xmlns="http://www.w3.org/2000/svg"><polygon class="pg-outline" points="62.0,180.0 162.0,180.0 211.6,43.7 111.6,43.7"></polygon><text class="pg-vlabel" x="45.0" y="195.0">A</text>
 <text class="pg-vlabel" x="171.0" y="195.0">B</text>
@@ -322,7 +363,7 @@
       <p class="statement">У выпуклого четырёхугольника ABCD AB = CD = 9 см, ∠ABD = ∠CDB, диагонали пересекаются в точке O. Периметр треугольника ABO (P₁) равен 23 см, периметр треугольника BOC (P₂) равен 25 см. Найдите периметр четырёхугольника ABCD.</p>
       <div class="answer-wrap"><span class="q">Ответ, см:</span><input type="text" class="ans-input" inputmode="decimal" placeholder="периметр"><button class="check-btn" type="button">Проверить</button><span class="feedback"></span></div>
     </div>
-  </div><div class="cheer" id="cheer">Все семь задач решены — параллелограмм покорён! 📐</div>
+  </div><div class="cheer" id="cheer">Все задачи решены — параллелограмм покорён! 📐</div>
 </div>
 <script>
 (function(){
@@ -360,6 +401,49 @@
 
   sets.forEach(function(set, i){
     var key = 'task-' + i;
+    if(set.classList.contains('angle-set')){
+      var inputs = Array.prototype.slice.call(set.querySelectorAll('.angle-input'));
+      var button = set.querySelector('.angle-check');
+      var feedback = set.querySelector('.feedback');
+      var status = set.querySelector('.status');
+      var saved = state[key];
+      if(saved && saved.correct){
+        set.classList.add('correct');
+        inputs.forEach(function(inp, idx){ inp.value = saved.values[idx] || ''; inp.disabled = true; });
+        button.textContent = 'Верно ✓';
+        status.textContent = 'решено';
+      }
+      function nums(raw){
+        return raw.trim().replace(/,/g,'.').split(/[;\\s]+/).filter(Boolean).map(Number);
+      }
+      function checkAngles(){
+        var allOk = true;
+        inputs.forEach(function(inp){
+          var got = nums(inp.value);
+          var expected = nums(inp.getAttribute('data-answers'));
+          var ok = got.length === expected.length && got.every(function(v, j){ return !isNaN(v) && Math.abs(v-expected[j]) <= 0.02; });
+          if(!ok) allOk = false;
+        });
+        if(allOk){
+          set.classList.remove('incorrect');
+          set.classList.add('correct');
+          inputs.forEach(function(inp){ inp.disabled = true; });
+          button.textContent = 'Верно ✓';
+          feedback.textContent = '';
+          status.textContent = 'решено';
+          var s = loadState();
+          s[key] = { correct:true, values:inputs.map(function(inp){return inp.value;}) };
+          saveState(s);
+          updateProgress();
+        }else{
+          set.classList.add('incorrect');
+          feedback.textContent = 'Проверь все углы и их порядок';
+        }
+      }
+      button.addEventListener('click', checkAngles);
+      inputs.forEach(function(inp){ inp.addEventListener('input', function(){ set.classList.remove('incorrect'); feedback.textContent=''; }); });
+      return;
+    }
     var input = set.querySelector('.ans-input');
     var button = set.querySelector('.check-btn');
     var feedback = set.querySelector('.feedback');
